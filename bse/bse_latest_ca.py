@@ -25,16 +25,16 @@ def latest_ca(request):
     security_name = request.args.get('company_name', '')
     query =""
     if start_date and end_date:
-        query = f'SELECT * FROM latest_bse_ca WHERE security_name LIKE "%{security_name}%" AND ex_date BETWEEN date("{start_date}") and date("{end_date}")'
+        query = f"SELECT * FROM latest_bse_ca WHERE security_name LIKE '%{security_name}%' AND ex_date BETWEEN date('{start_date}') and date('{end_date}')"
     elif start_date:
-        query = f'SELECT * FROM latest_bse_ca WHERE security_name LIKE "%{security_name}%" AND ex_date >= date("{start_date}")'
+        query = f"SELECT * FROM latest_bse_ca WHERE security_name LIKE '%{security_name}%' AND ex_date >= date('{start_date}')"
     elif end_date:
-        query = f'SELECT * FROM latest_bse_ca WHERE security_name LIKE "%{security_name}%" AND ex_date <= date("{end_date}")'
+        query = f"SELECT * FROM latest_bse_ca WHERE security_name LIKE '%{security_name}%' AND ex_date <= date('{end_date}')"
     else:
-        query = f'SELECT * FROM latest_bse_ca WHERE security_name LIKE "%{security_name}%"'
+        query = f"SELECT * FROM latest_bse_ca WHERE security_name LIKE '%{security_name}%'"
     cursor.execute(query)
     ca_array = []
-    for data in c:
+    for data in cursor:
         security_name = data[2][1:len(data[2])-1]
         if(data[10] == '\n-\n'):
             actual_payment_data = '-'
@@ -44,7 +44,7 @@ def latest_ca(request):
         corporate_action = {
             'security_code': data[1],
             'security_name': security_name,
-            'ex_date': datetime.strptime(data[3], "%Y-%m-%d").strftime("%d-%b-%Y"),
+            'ex_date': data[3].strftime("%d-%b-%Y"),
             'purpose': data[4],
             'record_date': data[5],
             'bc_start_date': data[6],
@@ -56,5 +56,5 @@ def latest_ca(request):
         ca_array.append(corporate_action)
     connection.commit()
     cursor.close()
-    conn.close()
+    connection.close()
     return (ca_array)
