@@ -18,6 +18,8 @@ from nse import nse_company_ca
 from money_control import money_control_upcoming_ca
 from money_control import money_control_company_ca
 
+from user_email_subscribe import add_to_subscriber_list as subscribe
+
 configure = ConfigParser()
 configure.read("secret.ini")
 
@@ -156,6 +158,11 @@ class CSV_MC(Resource):
         )
 
 
+class Subscribe(Resource):
+    def post(self):
+        return subscribe.add_as_subscriber(request)
+
+
 api.add_resource(LatestCA_BSE, "/api/bse_latestca")
 api.add_resource(CompanyCA_BSE, "/api/bse_companyca/<string:code>")
 api.add_resource(PDF_BSE, "/download/bse_pdf")
@@ -168,6 +175,7 @@ api.add_resource(LatestCA_MC, "/api/mc_latestca")
 api.add_resource(CompanyCA_MC, "/api/mc_companyca/<string:code>")
 api.add_resource(PDF_MC, "/download/mc_pdf")
 api.add_resource(CSV_MC, "/download/mc_csv")
+api.add_resource(Subscribe, "/api/subscribe")
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)
